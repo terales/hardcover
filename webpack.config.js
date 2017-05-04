@@ -10,6 +10,11 @@ module.exports = {
     path: distPath,
     filename: 'hardcover-bundle.js'
   },
+  module: {
+    rules: [
+      { test: /\.glsl/, loader: 'shader-loader' }
+    ]
+  },
   devServer: {
     contentBase: distPath
   }
