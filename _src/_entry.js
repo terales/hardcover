@@ -6,6 +6,8 @@ import shaderFragmentSource from './shaderFragment.glsl'
 import shaderCreate from './shaderCreate'
 import programCreate from './programCreate'
 import canvasResize from './canvasResize'
+import rectangleAdd from './rectangleAdd'
+import bookWidthClipspace from './bookWidthClipspace'
 
 /**
  * Initialization
@@ -26,6 +28,9 @@ const program = programCreate(gl, vertexShader, fragmentShader)
 
 // look up where the vertex data needs to go
 const positionAttributeLocation = gl.getAttribLocation(program, 'a_position')
+
+// look up uniform locations
+const colorUniformLocation = gl.getUniformLocation(program, 'u_color')
 
 // Create a buffer and put three 2d clip space points in it
 const positionBuffer = gl.createBuffer()
@@ -75,8 +80,22 @@ gl.vertexAttribPointer(
   positionAttributeLocation, size, type, normalize, stride, offset)
 
 // Draw
+const width = bookWidthClipspace(viewport.width, viewport.height)
+
+rectangleAdd({
+  gl,
+  x: -width / 2, // move left from screen center by half of width
+  y: 0.8,
+  width: width,
+  height: 2
+})
+
+ // Set color
+ // RGB(254, 116, 40) - color of http://artgorbunov.ru/projects/book-ui/
+ gl.uniform4f(colorUniformLocation, 254/255, 116/255, 40/255, 1)
+
 const primitiveType = gl.TRIANGLES
-const count = 3
+const count = 6
 gl.drawArrays(primitiveType, offset, count)
 
-console.log('Entry works')
+console.log('Drawn')
