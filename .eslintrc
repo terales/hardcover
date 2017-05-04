@@ -1,0 +1,17 @@
+{
+  "extends": [
+    "standard"
+  ],
+  "env": {
+    "browser": true,
+    "es6": true
+  },
+  "rules": {
+    "complexity": [ "error", 2 ],
+    "max-depth": [ "error", 3 ],
+    "max-nested-callbacks": ["error", 2],
+    "max-params": ["error", 3],
+    "max-statements": ["error", 10],
+    "max-len": ["error", { "ignoreUrls": true, "ignoreStrings": true, "ignoreTemplateLiterals": true }]
+  }
+}

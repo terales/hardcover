@@ -1,0 +1,35 @@
+{
+  "name": "hardcover",
+  "version": "0.0.0",
+  "description": "Unofficial hardcover animation module for the interactive handbook by Bureau Gorbunov Publishing",
+  "scripts": {
+    "start": "webpack-dev-server --open",
+    "test": "eslint ./_src ./dev-tasks",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/terales/hardcover.git"
+  },
+  "keywords": [
+    "book-cover",
+    "webgl",
+    "animation-3d"
+  ],
+  "author": "Aleksander Terekhov (https://www.terales.info/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/terales/hardcover/issues"
+  },
+  "homepage": "https://github.com/terales/hardcover#readme",
+  "devDependencies": {
+    "eslint": "3.*",
+    "eslint-config-standard": "10.*",
+    "eslint-plugin-import": "2.*",
+    "eslint-plugin-node": "4.*",
+    "eslint-plugin-promise": "3.*",
+    "eslint-plugin-standard": "3.*",
+    "webpack": "2.*",
+    "webpack-dev-server": "2.*"
+  }
+}

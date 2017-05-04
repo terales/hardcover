@@ -24,4 +24,7 @@
 ```
 npm i
 npm start
+
+// Lint JS for standart code style
+npm test
 ```
