@@ -7,7 +7,7 @@ import shaderCreate from './shaderCreate'
 import programCreate from './programCreate'
 import canvasResize from './canvasResize'
 import rectangleAdd from './rectangleAdd'
-import bookWidthClipspace from './bookWidthClipspace'
+import hardcoverWidthClipspace from './hardcoverWidthClipspace'
 
 /**
  * Initialization
@@ -80,7 +80,7 @@ gl.vertexAttribPointer(
   positionAttributeLocation, size, type, normalize, stride, offset)
 
 // Draw
-const width = bookWidthClipspace(viewport.width, viewport.height)
+const width = hardcoverWidthClipspace(viewport.width, viewport.height)
 
 rectangleAdd({
   gl,
