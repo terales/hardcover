@@ -36,18 +36,6 @@ const colorUniformLocation = gl.getUniformLocation(program, 'u_color')
 // Create a buffer and put three 2d clip space points in it
 const positionBuffer = gl.createBuffer()
 
-// Bind it to ARRAY_BUFFER (think of it as ARRAY_BUFFER = positionBuffer)
-gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer)
-
-// three 2d points
-const positions = [
-  0, 0,
-  0, 0.5,
-  0.7, 0
-]
-
-gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW)
-
 const actualTranslation = drawScene()
 
 // Setup UI
