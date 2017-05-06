@@ -51,13 +51,13 @@ gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW)
 const actualTranslation = drawScene()
 
 // Setup UI
-webglUI.setupSlider("#x", {slide: updatePosition(0), min: -1, step: 0.01, max: 1, precision: 3, value: actualTranslation[0]})
-webglUI.setupSlider("#y", {slide: updatePosition(1), min: -1, step: 0.01, max: 1, precision: 3, value: actualTranslation[1]})
+webglUI.setupSlider('#x', {slide: updatePosition(0), min: -1, step: 0.01, max: 1, precision: 3, value: actualTranslation[0]})
+webglUI.setupSlider('#y', {slide: updatePosition(1), min: -1, step: 0.01, max: 1, precision: 3, value: actualTranslation[1]})
 
-function updatePosition(index) {
-  return function(event, ui) {
-    actualTranslation[index] = ui.value;
-    drawScene(actualTranslation);
+function updatePosition (index) {
+  return function (event, ui) {
+    actualTranslation[index] = ui.value
+    drawScene(actualTranslation)
   }
 }
 
@@ -66,20 +66,23 @@ function updatePosition(index) {
  */
 
 // https://webglfundamentals.org/webgl/lessons/webgl-2d-translation.html
+/* eslint-disable max-statements */
 function drawScene (translation) {
   // Set canvas and viewport size
   const viewport = canvasResize(gl.canvas)
   gl.viewport(0, 0, viewport.width, viewport.height)
 
   // Set up hardcover dimensions, position and color
-  const hardcoverWidth = hardcoverWidthClipspace(viewport.width, viewport.height)
+  const hardcoverWidth = hardcoverWidthClipspace(
+    viewport.width,
+    viewport.height)
   const hardcoverHeight = 2 // Full canvas width
-  const hardcoverTranslation = translation ? translation : [
-    -hardcoverWidth / 2, // move left from screen center by half of hardcover width
+  const hardcoverTranslation = translation || [
+    -hardcoverWidth / 2, // move left from center by half of hardcover width
     0.8 // from http://artgorbunov.ru/projects/book-ui/
   ]
   // RGBA(254, 116, 40, 1) - color of http://artgorbunov.ru/projects/book-ui/
-  const hardcoverColor = new Float32Array([254/255, 116/255, 40/255, 1])
+  const hardcoverColor = new Float32Array([254 / 255, 116 / 255, 40 / 255, 1])
 
   // Clear the canvas
   gl.clearColor(0, 0, 0, 0)
@@ -98,7 +101,7 @@ function drawScene (translation) {
 
   rectangleAdd({
     gl,
-    x: hardcoverTranslation[0], 
+    x: hardcoverTranslation[0],
     y: hardcoverTranslation[1],
     width: hardcoverWidth,
     height: hardcoverHeight
@@ -126,3 +129,4 @@ function drawScene (translation) {
   console.log('drawn')
   return hardcoverTranslation
 }
+/* eslint-enable max-statements */
