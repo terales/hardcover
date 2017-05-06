@@ -1,6 +1,7 @@
 # Custom
 dist/*.js
 dist/*.map
+CHANGELOG.md
 
 # Logs
 logs
