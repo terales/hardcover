@@ -22,7 +22,8 @@ module.exports = function buildWithWebpack (onTaskReadyCallback) {
     })
 }
 
-function onWebpackDone ({isBuildReady, callback}, nodeError, stats) {
+// eslint-disable-next-line max-params
+function onWebpackDone (isBuildReady, callback, nodeError, stats) {
   console.log(stats.toString({
     hash: false,
     version: false,
