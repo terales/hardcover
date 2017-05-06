@@ -9,6 +9,8 @@ module.exports = function releaseUploadToGitHub (onTaskReadyCallback) {
 
   publishRelease({
     token: process.env.AUTORELEASE_TO_GITHUB,
+    owner: 'terales',
+    repo: 'hardcover',
     tag: version,
     name: version + ' ' + epithet.choose(' '),
     notes: changelog,
