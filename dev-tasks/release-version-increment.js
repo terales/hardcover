@@ -10,8 +10,8 @@ module.exports = function releaseIncrementVersion (onTaskReadyCallback) {
 function writeVersion (onTaskReadyCallback, err, { releaseType }) {
   if (err) this.opts.plugins.util.log(err)
 
-  return this.gulp.src(this.opts.src)
+  return this.gulp.src('./package.json')
     .pipe(this.opts.plugins.bump({ type: releaseType }))
-    .pipe(this.gulp.dest(this.opts.dest))
+    .pipe(this.gulp.dest('./'))
     .on('end', onTaskReadyCallback)
 }
