@@ -10,6 +10,7 @@ import hardcoverWidthClipspace from './hardcoverWidthClipspace'
 import webglUI from '../node_modules/webgl-fundamentals/webgl/resources/webgl-lessons-ui'
 import hardcoverSetGeometry from './hardcoverSetGeometry'
 import hardcoverSetTranslation from './hardcoverSetTranslation'
+import hardcoverSetRotation from './hardcoverSetRotation'
 
 /**
  * Initialization
@@ -33,21 +34,30 @@ const positionAttributeLocation = gl.getAttribLocation(program, 'a_position')
 
 // look up uniform locations
 const translationUniformLocation = gl.getUniformLocation(program, 'u_translation')
+const rotationLocation = gl.getUniformLocation(program, 'u_rotation')
 const colorUniformLocation = gl.getUniformLocation(program, 'u_color')
 
 // Create a buffer and put three 2d clip space points in it
 const positionBuffer = gl.createBuffer()
 
-const actualTranslation = drawScene()
+let {translation: actualTranslation, rotation: actualRotation} = drawScene()
 
 // Setup UI
 webglUI.setupSlider('#x', {slide: updatePosition(0), min: -1, step: 0.01, max: 1, precision: 3, value: actualTranslation[0]})
 webglUI.setupSlider('#y', {slide: updatePosition(1), min: -1, step: 0.01, max: 1, precision: 3, value: actualTranslation[1]})
+webglUI.setupSlider('#rotation', {slide: updateAngle(), min: 0, step: 1, max: 360, precision: 0, value: actualRotation})
 
 function updatePosition (index) {
   return function (event, ui) {
     actualTranslation[index] = ui.value
-    drawScene(actualTranslation)
+    drawScene(actualTranslation, actualRotation)
+  }
+}
+
+function updateAngle () {
+  return function (event, ui) {
+    actualRotation = ui.value
+    drawScene(actualTranslation,actualRotation)
   }
 }
 
@@ -57,7 +67,7 @@ function updatePosition (index) {
 
 // https://webglfundamentals.org/webgl/lessons/webgl-2d-translation.html
 /* eslint-disable max-statements */
-function drawScene (translation) {
+function drawScene (translation, rotation) {
   // Set canvas and viewport size
   const viewport = canvasResize(gl.canvas)
   gl.viewport(0, 0, viewport.width, viewport.height)
@@ -82,6 +92,8 @@ function drawScene (translation) {
     hardcoverWidth: hadcoverDimentions.width
   })
 
+  const hadcoverRotation = hardcoverSetRotation({gl, rotationLocation, rotation})
+
   // Set color
   gl.uniform4fv(colorUniformLocation, hardcoverColor)
 
@@ -92,6 +104,9 @@ function drawScene (translation) {
   gl.drawArrays(primitiveType, drawOffset, count)
 
   console.log('drawn')
-  return hardcoverTranslation
+  return {
+    translation: hardcoverTranslation,
+    rotation: hadcoverRotation
+  }
 }
 /* eslint-enable max-statements */
