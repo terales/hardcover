@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "description": "Unofficial hardcover animation module for the interactive handbook by Bureau Gorbunov Publishing",
   "scripts": {
+    "commit": "git-cz",
     "start": "webpack-dev-server --open",
     "test": "eslint ./_src ./dev-tasks gulpfile.js webpacl.config.js",
     "release": "npm-run-all test gulp release",
