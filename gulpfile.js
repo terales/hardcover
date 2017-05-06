@@ -20,7 +20,7 @@ gulp.task('release', onTaskReadyCallback => {
     'release-create-tag',
     ['build-with-webpack', 'release-generate-changelog', 'release-push'],
     'release-publish-to-github-pages',
-    'release-create-on-github.js',
+    'release-create-on-github',
     onTaskReadyCallback
   )
 })
