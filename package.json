@@ -4,8 +4,9 @@
   "description": "Unofficial hardcover animation module for the interactive handbook by Bureau Gorbunov Publishing",
   "scripts": {
     "start": "webpack-dev-server --open",
-    "test": "eslint ./_src ./dev-tasks",
-    "build": "webpack"
+    "test": "eslint ./_src ./dev-tasks gulpfile.js webpacl.config.js",
+    "release": "npm-run-all test gulp release",
+    "release-after-test": "gulp release"
   },
   "repository": {
     "type": "git",
@@ -23,15 +24,36 @@
   },
   "homepage": "https://github.com/terales/hardcover#readme",
   "devDependencies": {
+    "commitizen": "2.*",
+    "conventional-changelog": "1.*",
+    "conventional-recommended-bump": "1.*",
+    "del": "2.2.*",
+    "epithet": "1.1.*",
     "eslint": "3.*",
     "eslint-config-standard": "10.*",
     "eslint-plugin-import": "2.*",
     "eslint-plugin-node": "4.*",
     "eslint-plugin-promise": "3.*",
     "eslint-plugin-standard": "3.*",
-    "shader-loader": "1.3.0",
+    "gh-pages": "0.12.*",
+    "gulp": "3.9.*",
+    "gulp-bump": "2.7.*",
+    "gulp-git": "2.2.*",
+    "gulp-load-plugins": "1.5.*",
+    "gulp-task-loader": "1.4.*",
+    "npm-run-all": "4.0.2",
+    "publish-release": "1.3.*",
+    "require-uncached": "1.0.*",
+    "run-sequence": "1.2.*",
+    "shader-loader": "1.3.*",
     "webgl-fundamentals": "github:greggman/webgl-fundamentals",
     "webpack": "2.*",
-    "webpack-dev-server": "2.*"
+    "webpack-dev-server": "2.*",
+    "webpack-stream": "3.2.*"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
