@@ -2,18 +2,12 @@
 
 // an attribute will receive data from a buffer
 attribute vec2 a_position;
-uniform vec2 u_translation; // https://webglfundamentals.org/webgl/lessons/webgl-2d-translation.html
-uniform vec2 u_rotation; // https://webglfundamentals.org/webgl/lessons/webgl-2d-rotation.html
+uniform mat3 u_matrix;
 
 // all shaders have a main function
 void main() {
-  // Add in the 2D rotation
-  vec2 rotatedPosition = vec2(
-    a_position.x * u_rotation.y + a_position.y * u_rotation.x,
-    a_position.y * u_rotation.y - a_position.x * u_rotation.x);
-
-  // Add in the translation.
-  vec2 position = rotatedPosition + u_translation;
+  // Multiply the position by the matrix.
+  vec2 position = (u_matrix * vec3(a_position, 1)).xy;
  
   // gl_Position is a special variable a vertex shader
   // is responsible for setting

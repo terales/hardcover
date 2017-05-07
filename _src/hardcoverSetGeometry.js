@@ -9,7 +9,12 @@ const bufferOffset = 0  // start at the beginning of the buffer
 const stride = 0        // 0 = move forward size * sizeof(type) each iteration
                         // to get the next position
 
-export default function hardcoverSetGeometry ({gl, positionAttributeLocation, positionBuffer, viewport}) {
+export default function hardcoverSetGeometry ({
+  gl,
+  positionAttributeLocation,
+  positionBuffer,
+  viewport
+}) {
   const width = hardcoverWidthClipspace(
     viewport.width,
     viewport.height)
@@ -24,16 +29,18 @@ export default function hardcoverSetGeometry ({gl, positionAttributeLocation, po
 
   gl.bufferData(
       gl.ARRAY_BUFFER,
+      /* eslint-disable no-multi-spaces */
       new Float32Array([
         // first triangle
         0,     0,      // top left
         width, 0,      // top right
         0,     height, // bottom left
         // second triangle
-        0,     height, // bottom left        
+        0,     height, // bottom left
         width, 0,      // top right
-        width, height, // bottom right
+        width, height  // bottom right
       ]),
+      /* eslint-enable no-multi-spaces */
       gl.STATIC_DRAW)
 
   // Tell the attribute how to get data out of positionBuffer (ARRAY_BUFFER)

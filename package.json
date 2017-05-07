@@ -5,7 +5,7 @@
   "scripts": {
     "commit": "git-cz",
     "start": "webpack-dev-server --open",
-    "test": "eslint ./_src ./dev-tasks gulpfile.js webpacl.config.js",
+    "test": "eslint ./_src ./dev-tasks gulpfile.js webpack.config.js",
     "release": "npm-run-all test release-after-test",
     "release-after-test": "gulp release"
   },
