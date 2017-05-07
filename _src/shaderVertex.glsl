@@ -6,10 +6,5 @@ uniform mat3 u_matrix;
 
 // all shaders have a main function
 void main() {
-  // Multiply the position by the matrix.
-  vec2 position = (u_matrix * vec3(a_position, 1)).xy;
- 
-  // gl_Position is a special variable a vertex shader
-  // is responsible for setting
-  gl_Position = vec4(position, 0, 1);
+  gl_Position = vec4((u_matrix * vec3(a_position, 1)).xy, 0, 1);
 }
