@@ -1,6 +1,4 @@
-import hardcoverWidthClipspace from './hardcoverWidthClipspace'
-
-const height = -2 // Hardcover heigth is equal to canvas height
+const BOOK_ASPECT_RATIO = 0.71 // from http://artgorbunov.ru/projects/book-ui/
 
 // For gl.vertexAttribPointer()
 const size = 2          // 2 components per iteration
@@ -15,9 +13,8 @@ export default function hardcoverSetGeometry ({
   positionBuffer,
   viewport
 }) {
-  const width = hardcoverWidthClipspace(
-    viewport.width,
-    viewport.height)
+  const height = viewport.height // Hardcover heigth is equal to canvas height
+  const width = height * BOOK_ASPECT_RATIO
 
   // tell WebGL how to take data from the buffer we setup above
   // and supply it to the attribute in the shader

@@ -42,8 +42,8 @@ const positionBuffer = gl.createBuffer()
 let {translation, rotation, scale} = drawScene()
 
 // Setup UI
-webglUI.setupSlider('#x', {slide: updatePosition(0), min: -1, step: 0.01, max: 1, precision: 3, value: translation[0]})
-webglUI.setupSlider('#y', {slide: updatePosition(1), min: -1, step: 0.01, max: 1, precision: 3, value: translation[1]})
+webglUI.setupSlider('#x', {slide: updatePosition(0), min: 0, step: 1, max: canvas.clientWidth, value: translation[0]})
+webglUI.setupSlider('#y', {slide: updatePosition(1), min: 0, step: 1, max: canvas.clientHeight, value: translation[1]})
 webglUI.setupSlider('#rotation', {slide: updateAngle(), min: 0, step: 1, max: 360, precision: 0, value: rotation})
 webglUI.setupSlider('#scale', {slide: updateScale(), min: -5, step: 0.01, max: 5, precision: 2, value: scale})
 
@@ -95,18 +95,20 @@ function drawScene (translation, rotation = 0, scale = 1) {
   
   if (!translation) {
     translation = [
-      -hadcoverDimentions.width / 2, // left by half of hardcover width
-      0.8 // from http://artgorbunov.ru/projects/book-ui/
+      (viewport.width - hadcoverDimentions.width) / 2, // left by half of hardcover width
+      viewport.height * 0.2 // 0.8 of screen from http://artgorbunov.ru/projects/book-ui/
     ]
   }
 
   // Compute the matrices
+  const projectionMatrix = math3d.projection(viewport.width, viewport.height)
   const translationMatrix = math3d.translation(translation[0], translation[1])
   const rotationMatrix = math3d.rotation(rotation * radiansPerDegree)
   const scaleMatrix = math3d.scaling(scale, scale)
 
   // Multiply the matrices
-  let matrix = math3d.multiply(translationMatrix, rotationMatrix)
+  let matrix = math3d.multiply(projectionMatrix, translationMatrix)
+  matrix = math3d.multiply(matrix, rotationMatrix)
   matrix = math3d.multiply(matrix, scaleMatrix)
 
   // Set the matrix.
