@@ -1,7 +1,7 @@
 const BOOK_ASPECT_RATIO = 0.71 // from http://artgorbunov.ru/projects/book-ui/
 
 // For gl.vertexAttribPointer()
-const size = 2          // 2 components per iteration
+const size = 3          // 2 components per iteration
 const normalize = false // don't normalize the data
 const bufferOffset = 0  // start at the beginning of the buffer
 const stride = 0        // 0 = move forward size * sizeof(type) each iteration
@@ -29,13 +29,13 @@ export default function hardcoverSetGeometry ({
       /* eslint-disable no-multi-spaces */
       new Float32Array([
         // first triangle
-        0,     0,      // top left
-        width, 0,      // top right
-        0,     height, // bottom left
+        0,     0,      0, // top left
+        width, 0,      0, // top right
+        0,     height, 0, // bottom left
         // second triangle
-        0,     height, // bottom left
-        width, 0,      // top right
-        width, height  // bottom right
+        0,     height, 0, // bottom left
+        width, 0,      0, // top right
+        width, height, 0  // bottom right
       ]),
       /* eslint-enable no-multi-spaces */
       gl.STATIC_DRAW)

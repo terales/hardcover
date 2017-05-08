@@ -8,13 +8,23 @@ import programCreate from './programCreate'
 import canvasResize from './canvasResize'
 import webglUI from '../node_modules/webgl-fundamentals/webgl/resources/webgl-lessons-ui'
 import hardcoverSetGeometry from './hardcoverSetGeometry'
-import Math3d from './math3d'
+import {m4} from '../node_modules/twgl.js/dist/3.x/twgl-full'
+
+// Temporary, until switch to perspective
+m4.projection = function (width, height, depth) {
+  // Note: This matrix flips the Y axis so 0 is at the top.
+  return [
+    2 / width, 0, 0, 0,
+    0, -2 / height, 0, 0,
+    0, 0, 2 / depth, 0,
+    -1, 1, 0, 1
+  ]
+}
 
 /**
  * Initialization
  */
 const radiansPerDegree = Math.PI / 180
-const math3d = new Math3d()
 
 const canvas = document.getElementById('canvas')
 const gl = canvas.getContext('webgl')
@@ -44,6 +54,7 @@ let {translation, rotation, scale} = drawScene()
 // Setup UI
 webglUI.setupSlider('#x', {slide: updatePosition(0), min: 0, step: 1, max: canvas.clientWidth, value: translation[0]})
 webglUI.setupSlider('#y', {slide: updatePosition(1), min: 0, step: 1, max: canvas.clientHeight, value: translation[1]})
+webglUI.setupSlider('#z', {slide: updatePosition(2), min: 0, step: 1, max: 1000, value: translation[2]})
 webglUI.setupSlider('#rotation', {slide: updateAngle(), min: 0, step: 1, max: 360, precision: 0, value: rotation})
 webglUI.setupSlider('#scale', {slide: updateScale(), min: -5, step: 0.01, max: 5, precision: 2, value: scale})
 
@@ -92,27 +103,23 @@ function drawScene (translation, rotation = 0, scale = 1) {
   const hadcoverDimentions = hardcoverSetGeometry({
     gl, positionAttributeLocation, positionBuffer, viewport
   })
-  
+
   if (!translation) {
     translation = [
-      (viewport.width - hadcoverDimentions.width) / 2, // left by half of hardcover width
-      viewport.height * 0.2 // 0.8 of screen from http://artgorbunov.ru/projects/book-ui/
+      (viewport.width - hadcoverDimentions.width) / 2,
+      viewport.height * 0.1, // 0.1 of screen from http://artgorbunov.ru/projects/book-ui/
+      0
     ]
   }
 
   // Compute the matrices
-  const projectionMatrix = math3d.projection(viewport.width, viewport.height)
-  const translationMatrix = math3d.translation(translation[0], translation[1])
-  const rotationMatrix = math3d.rotation(rotation * radiansPerDegree)
-  const scaleMatrix = math3d.scaling(scale, scale)
-
-  // Multiply the matrices
-  let matrix = math3d.multiply(projectionMatrix, translationMatrix)
-  matrix = math3d.multiply(matrix, rotationMatrix)
-  matrix = math3d.multiply(matrix, scaleMatrix)
+  let matrix = m4.projection(gl.canvas.clientWidth, gl.canvas.clientHeight, 400)
+  matrix = m4.translate(matrix, translation)
+  matrix = m4.rotateY(matrix, rotation * radiansPerDegree)
+  matrix = m4.scale(matrix, [scale, scale, 1])
 
   // Set the matrix.
-  gl.uniformMatrix3fv(matrixLocation, false, matrix)
+  gl.uniformMatrix4fv(matrixLocation, false, matrix)
 
   // Set color
   gl.uniform4fv(colorUniformLocation, hardcoverColor)
