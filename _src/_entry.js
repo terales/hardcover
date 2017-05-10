@@ -21,7 +21,7 @@ const radiansPerDegree = Math.PI / 180
 const upVector = [0, 1, 0]
 
 const canvas = document.getElementById('canvas')
-const gl = canvas.getContext('webgl')
+const gl = canvas.getContext('webgl', {alpha: false})
 
 // create GLSL shaders, upload the GLSL source, compile the shaders
 const vertexShader = shaderCreate(
@@ -50,11 +50,11 @@ let {translation, rotation, scale, fieldOfView, cameraAngle} = drawScene()
 // Setup UI
 webglUI.setupSlider('#cameraAngle', {slide: updateCameraAngle, min: -360, step: 1, max: 360, value: cameraAngle})
 webglUI.setupSlider('#fieldOfView', {slide: updateFieldOfView, min: 1, step: 1, max: 179, value: fieldOfView})
-webglUI.setupSlider('#x', {slide: updatePosition(0), min: -500, step: 1, max: canvas.clientWidth, value: translation[0]})
-webglUI.setupSlider('#y', {slide: updatePosition(1), min: -500, step: 1, max: canvas.clientHeight, value: translation[1]})
-webglUI.setupSlider('#z', {slide: updatePosition(2), min: -500, step: 1, max: 1000, value: translation[2]})
-webglUI.setupSlider('#rotationY', {slide: updateAngle, min: 0, step: 1, max: 360, precision: 0, value: rotation})
-webglUI.setupSlider('#scale', {slide: updateScale, min: -5, step: 0.01, max: 5, precision: 2, value: scale})
+webglUI.setupSlider('#x', {slide: updatePosition(0), min: -1000, step: 1, max: canvas.clientWidth, value: translation[0]})
+webglUI.setupSlider('#y', {slide: updatePosition(1), min: -1000, step: 1, max: canvas.clientHeight, value: translation[1]})
+webglUI.setupSlider('#z', {slide: updatePosition(2), min: -1000, step: 1, max: 2000, value: translation[2]})
+webglUI.setupSlider('#rotationY', {slide: updateAngle, min: -360, step: 1, max: 360, precision: 0, value: rotation})
+webglUI.setupSlider('#scale', {slide: updateScale, min: -10, step: 0.01, max: 10, precision: 2, value: scale})
 
 function updateCameraAngle(event, ui) {
   cameraAngle = ui.value
@@ -89,12 +89,14 @@ function updateScale (event, ui) {
 
 // https://webglfundamentals.org/webgl/lessons/webgl-2d-translation.html
 /* eslint-disable max-statements */
-function drawScene (translation, rotation = 46, scale = 0.6, fieldOfView = 123, cameraAngle = 0) {
+function drawScene (translation, rotation = 0, scale = 1.32, fieldOfView = 60, cameraAngle = 0) {
   // Set canvas and viewport size
   const viewport = canvasResize(gl.canvas)
   gl.viewport(0, 0, viewport.width, viewport.height)
 
   // Clear the canvas
+  gl.colorMask(true, true, true, true)
+  gl.clearColor(1, 1, 1, 1)
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
   gl.enable(gl.CULL_FACE)
@@ -111,14 +113,14 @@ function drawScene (translation, rotation = 46, scale = 0.6, fieldOfView = 123, 
     translation = [
       0, // (viewport.width - hadcoverDimentions.width) / 2,
       0, // viewport.height * 0.1, // 0.1 of screen from http://artgorbunov.ru/projects/book-ui/
-      320
+      2000
     ]
   }
 
   // Compute the matrices
   const aspect = viewport.width / viewport.height
   const near = 1
-  const far = 2000
+  const far = 4000
   const projectionMatrix = m4.perspective(fieldOfView * radiansPerDegree, aspect, near, far)
   
   // Compute a matrix for the camera
