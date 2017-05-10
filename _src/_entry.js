@@ -1,6 +1,7 @@
 // https://webglfundamentals.org/webgl/lessons/webgl-fundamentals.html
 
-// TODO Add 3D sides to hardcover front
+// TODO Calc hardcover and camera positions to achieve initial one as in http://artgorbunov.ru/books/ui/demo/
+// Reference https://webglfundamentals.org/webgl/lessons/webgl-3d-camera.html
 
 import shaderVertexSource from './shaderVertex.glsl'
 import shaderFragmentSource from './shaderFragment.glsl'
@@ -17,6 +18,7 @@ import {m4} from '../node_modules/twgl.js/dist/3.x/twgl-full'
  * Initialization
  */
 const radiansPerDegree = Math.PI / 180
+const upVector = [0, 1, 0]
 
 const canvas = document.getElementById('canvas')
 const gl = canvas.getContext('webgl')
@@ -87,13 +89,12 @@ function updateScale (event, ui) {
 
 // https://webglfundamentals.org/webgl/lessons/webgl-2d-translation.html
 /* eslint-disable max-statements */
-function drawScene (translation, rotation = 10, scale = 1, fieldOfView = 60, cameraAngle = 0) {
+function drawScene (translation, rotation = 46, scale = 0.6, fieldOfView = 123, cameraAngle = 0) {
   // Set canvas and viewport size
   const viewport = canvasResize(gl.canvas)
   gl.viewport(0, 0, viewport.width, viewport.height)
 
   // Clear the canvas
-  gl.clearColor(0, 0, 0, 0)
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
   gl.enable(gl.CULL_FACE)
@@ -108,9 +109,9 @@ function drawScene (translation, rotation = 10, scale = 1, fieldOfView = 60, cam
 
   if (!translation) {
     translation = [
-      (viewport.width - hadcoverDimentions.width) / 2,
-      viewport.height * 0.1, // 0.1 of screen from http://artgorbunov.ru/projects/book-ui/
-      -360
+      0, // (viewport.width - hadcoverDimentions.width) / 2,
+      0, // viewport.height * 0.1, // 0.1 of screen from http://artgorbunov.ru/projects/book-ui/
+      320
     ]
   }
 
@@ -121,10 +122,17 @@ function drawScene (translation, rotation = 10, scale = 1, fieldOfView = 60, cam
   const projectionMatrix = m4.perspective(fieldOfView * radiansPerDegree, aspect, near, far)
   
   // Compute a matrix for the camera
-  const numFs = 5
-  const radius = 200
-  let  cameraMatrix = m4.rotationY(cameraAngle * radiansPerDegree)
-  cameraMatrix = m4.translate(cameraMatrix, 0, 0, radius * 1.5)
+  const cameraPosition = [
+    hadcoverDimentions.width / 2,
+    hadcoverDimentions.height / 2,
+    -360
+  ]
+  let  cameraMatrix = m4.lookAt(cameraPosition,
+    [
+      translation[0] + cameraPosition[0], // look at the horizontal center of front cover
+      translation[1] + cameraPosition[1], // look at the vertical center of front cover
+      translation[2]
+    ], upVector)
 
   const viewMatrix = m4.inverse(cameraMatrix)
 
