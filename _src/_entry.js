@@ -116,16 +116,10 @@ function drawScene (translation, rotation = 0, scale = 1, fieldOfView = 45, came
   })
 
   if (!translation) {
-    // http://stackoverflow.com/a/13814235/1363799
-    // if you scale an object by some value `d`, and also move it along the Z axis by `f * d`, then it will not appear to change size.
-    // f  = cotangent(fieldOfView/2)
-    //const f = (1 / Math.tan(fieldOfView * radiansPerDegree)) / 2
-    //console.log(f)
-
     translation = [
       0, // (viewport.width - hadcoverDimentions.width) / 2,
       0, // viewport.height * 0.1, // 0.1 of screen from http://artgorbunov.ru/projects/book-ui/
-      0 //f * scale
+      0
     ]
   }
 
@@ -144,7 +138,6 @@ function drawScene (translation, rotation = 0, scale = 1, fieldOfView = 45, came
   // Compute the matrices
   const near = (cameraPosition[2] + hadcoverDimentions.width) * -1
   const far = (cameraPosition[2] - hadcoverDimentions.width) * -1
-
   const projectionMatrix = m4.perspective(fieldOfView * radiansPerDegree, aspect, near, far)
 
   // Compute a matrix for the camera
