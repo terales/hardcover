@@ -45,42 +45,46 @@ hardcoverSetColor({gl, colorAttributeLocation, colorBuffer})
 // look up uniform locations
 const matrixLocation = gl.getUniformLocation(program, 'u_matrix')
 
-let {translation, rotation, scale, fieldOfView, cameraAngle} = drawScene()
+let {translation, rotation, scale, fieldOfView, cameraPosition} = drawScene()
 
 // Setup UI
-webglUI.setupSlider('#cameraAngle', {slide: updateCameraAngle, min: -360, step: 1, max: 360, value: cameraAngle})
 webglUI.setupSlider('#fieldOfView', {slide: updateFieldOfView, min: 1, step: 1, max: 179, value: fieldOfView})
-webglUI.setupSlider('#x', {slide: updatePosition(0), min: -1000, step: 1, max: canvas.clientWidth, value: translation[0]})
-webglUI.setupSlider('#y', {slide: updatePosition(1), min: -1000, step: 1, max: canvas.clientHeight, value: translation[1]})
-webglUI.setupSlider('#z', {slide: updatePosition(2), min: -1000, step: 1, max: 2000, value: translation[2]})
-webglUI.setupSlider('#rotationY', {slide: updateAngle, min: -360, step: 1, max: 360, precision: 0, value: rotation})
+webglUI.setupSlider('#cameraX', {slide: updateCameraPosition(0), min: -4000, step: 1, max: 4000, value: cameraPosition[0]})
+webglUI.setupSlider('#cameraY', {slide: updateCameraPosition(1), min: -4000, step: 1, max: 4000, value: cameraPosition[1]})
+webglUI.setupSlider('#cameraZ', {slide: updateCameraPosition(2), min: -4000, step: 1, max: 4000, value: cameraPosition[2]})
+webglUI.setupSlider('#hardcoverX', {slide: updatePosition(0), min: -4000, step: 1, max: 4000, value: translation[0]})
+webglUI.setupSlider('#hardcoverY', {slide: updatePosition(1), min: -4000, step: 1, max: 4000, value: translation[1]})
+webglUI.setupSlider('#hardcoverZ', {slide: updatePosition(2), min: -4000, step: 1, max: 4000, value: translation[2]})
+webglUI.setupSlider('#hardcoverRotationY', {slide: updateAngle, min: -360, step: 1, max: 360, precision: 0, value: rotation})
 webglUI.setupSlider('#scale', {slide: updateScale, min: -10, step: 0.01, max: 10, precision: 2, value: scale})
 
-function updateCameraAngle(event, ui) {
-  cameraAngle = ui.value
-  drawScene(translation, rotation, scale, fieldOfView, cameraAngle)
+function updateCameraPosition(index) {
+  return function (event, ui) {
+    cameraPosition[index] = ui.value
+    drawScene(translation, rotation, scale, fieldOfView, cameraPosition)
+  }
 }
 
 function updateFieldOfView(event, ui) {
   fieldOfView = ui.value
-  drawScene(translation, rotation, scale, fieldOfView, cameraAngle)
+  drawScene(translation, rotation, scale, fieldOfView, cameraPosition)
 }
 
 function updatePosition (index) {
   return function (event, ui) {
     translation[index] = ui.value
-    drawScene(translation, rotation, scale, fieldOfView, cameraAngle)
+    drawScene(translation, rotation, scale, fieldOfView, cameraPosition)
   }
 }
 
 function updateAngle (event, ui) {
   rotation = ui.value
-  drawScene(translation, rotation, scale, fieldOfView, cameraAngle)
+  drawScene(translation, rotation, scale, fieldOfView, cameraPosition)
 }
 
 function updateScale (event, ui) {
   scale = ui.value
-  drawScene(translation, rotation, scale, fieldOfView, cameraAngle)
+  drawScene(translation, rotation, scale, fieldOfView, cameraPosition)
 }
 
 /**
@@ -89,7 +93,7 @@ function updateScale (event, ui) {
 
 // https://webglfundamentals.org/webgl/lessons/webgl-2d-translation.html
 /* eslint-disable max-statements */
-function drawScene (translation, rotation = 0, scale = 1.32, fieldOfView = 60, cameraAngle = 0) {
+function drawScene (translation, rotation = 0, scale = 1, fieldOfView = 45, cameraPosition) {
   // Set canvas and viewport size
   const viewport = canvasResize(gl.canvas)
   gl.viewport(0, 0, viewport.width, viewport.height)
@@ -113,7 +117,7 @@ function drawScene (translation, rotation = 0, scale = 1.32, fieldOfView = 60, c
     translation = [
       0, // (viewport.width - hadcoverDimentions.width) / 2,
       0, // viewport.height * 0.1, // 0.1 of screen from http://artgorbunov.ru/projects/book-ui/
-      2000
+      0
     ]
   }
 
@@ -124,11 +128,13 @@ function drawScene (translation, rotation = 0, scale = 1.32, fieldOfView = 60, c
   const projectionMatrix = m4.perspective(fieldOfView * radiansPerDegree, aspect, near, far)
   
   // Compute a matrix for the camera
-  const cameraPosition = [
-    hadcoverDimentions.width / 2,
-    hadcoverDimentions.height / 2,
-    -360
-  ]
+  if (!cameraPosition) {
+    cameraPosition = [
+      0, //hadcoverDimentions.width / 2,
+      400, //hadcoverDimentions.height / 2,
+      -2250
+    ]
+  }
   let  cameraMatrix = m4.lookAt(cameraPosition,
     [
       translation[0] + cameraPosition[0], // look at the horizontal center of front cover
@@ -154,6 +160,6 @@ function drawScene (translation, rotation = 0, scale = 1.32, fieldOfView = 60, c
   gl.drawArrays(primitiveType, drawOffset, count)
 
   console.log('drawn')
-  return { translation, rotation, scale, fieldOfView, cameraAngle }
+  return { translation, rotation, scale, fieldOfView, cameraPosition }
 }
 /* eslint-enable max-statements */
