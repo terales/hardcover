@@ -5,13 +5,21 @@
 <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
 <style>
   html, body { margin: 0; padding: 0; }
+  body { overflow-y: scroll; }
   #canvas { display: block; width: 100%; height: 100%; }
   #demo { position: fixed; top: 1vh; right: 2vw; width: 200px; }
 </style>
 
 <div id="demo">
-  <div id="x"></div>
-  <div id="y"></div>
+  <div id="fieldOfView"></div>
+  <div id="cameraX"></div>
+  <div id="cameraY"></div>
+  <div id="cameraZ"></div>
+  <div id="hardcoverX"></div>
+  <div id="hardcoverY"></div>
+  <div id="hardcoverZ"></div>
+  <div id="hardcoverRotationY"></div>
+  <div id="scale"></div>
 </div>
 <canvas id="canvas">
 <script src="hardcover-bundle.js"></script>
