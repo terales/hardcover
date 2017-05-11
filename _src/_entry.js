@@ -1,4 +1,6 @@
 // https://webglfundamentals.org/webgl/lessons/webgl-fundamentals.html
+// https://github.com/emoller/WebGL101
+// Quick overview: https://nickdesaulniers.github.io/RawWebGL/
 
 // TODO Calc hardcover and camera positions to achieve initial one as in http://artgorbunov.ru/books/ui/demo/
 // Reference https://webglfundamentals.org/webgl/lessons/webgl-3d-camera.html
@@ -114,27 +116,38 @@ function drawScene (translation, rotation = 0, scale = 1, fieldOfView = 45, came
   })
 
   if (!translation) {
+    // http://stackoverflow.com/a/13814235/1363799
+    // if you scale an object by some value `d`, and also move it along the Z axis by `f * d`, then it will not appear to change size.
+    // f  = cotangent(fieldOfView/2)
+    //const f = (1 / Math.tan(fieldOfView * radiansPerDegree)) / 2
+    //console.log(f)
+
     translation = [
       0, // (viewport.width - hadcoverDimentions.width) / 2,
       0, // viewport.height * 0.1, // 0.1 of screen from http://artgorbunov.ru/projects/book-ui/
-      0
+      0 //f * scale
+    ]
+  }
+
+  const aspect = viewport.width / viewport.height
+
+  if (!cameraPosition) {
+    // TODO Get the math of calculating these constants to the camera position
+    // Constants got from fullhd full screen example
+    cameraPosition = [
+      346, // from pixel perfect experiments // Math.round((viewport.width / 2 -  hadcoverDimentions.width / 2) / aspect), // x
+      585, // from pixel perfect experiments // Math.round(viewport.height / 2 + viewport.height * 0.1), // y
+      -1207 // z - from pixel perfect experiments
     ]
   }
 
   // Compute the matrices
-  const aspect = viewport.width / viewport.height
-  const near = 1
-  const far = 4000
+  const near = (cameraPosition[2] + hadcoverDimentions.width) * -1
+  const far = (cameraPosition[2] - hadcoverDimentions.width) * -1
+
   const projectionMatrix = m4.perspective(fieldOfView * radiansPerDegree, aspect, near, far)
-  
+
   // Compute a matrix for the camera
-  if (!cameraPosition) {
-    cameraPosition = [
-      0, //hadcoverDimentions.width / 2,
-      400, //hadcoverDimentions.height / 2,
-      -2250
-    ]
-  }
   let  cameraMatrix = m4.lookAt(cameraPosition,
     [
       translation[0] + cameraPosition[0], // look at the horizontal center of front cover
