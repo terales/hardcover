@@ -1,0 +1,11 @@
+[ignore]
+<PROJECT_ROOT>/node_modules/[^t].*
+<PROJECT_ROOT>/dev-tasks/**
+<PROJECT_ROOT>/dist/**
+
+[include]
+./_src
+
+[libs]
+
+[options]
