@@ -54,7 +54,7 @@ for (let i = 0; i < 11; i++) {
   const offset = i * 20
 
   const xGridLine = new Node(lineOptions(xLinePrimitive, whiteColor))
-  xGridLine.localMatrix = m4.translation([0, offset, offset])
+  xGridLine.localMatrix = m4.translation([0, -offset, offset])
   xGridLine.setParent(bookShelf)
   objects.push(xGridLine)
 
