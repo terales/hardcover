@@ -23,13 +23,13 @@ const attributes = ['a_position']
 const programInfo = twgl.createProgramInfo(gl, [shaderVertex, shaderFragment], attributes)
 
 const xLinePrimitive = new Float32Array([
-  -100, 0, -360,
-   100, 0, -360,
+  -100, 100, -500,
+   100, 100, -500,
 ])
 
 const yLinePrimitive = new Float32Array([
-  0, -100, -360,
-  0,  100, -360,
+  -100, 100, -500,
+  -100, -100, -300,
 ])
 
 const lineOptions = (primitive, color) => ({
@@ -51,11 +51,11 @@ const objects = [
 ]
 
 for (let i = 0; i < 11; i++) {
-  const offset = -100 + i * 20
+  const offset = i * 20
 
   const xGridLine = new Node(lineOptions(xLinePrimitive, whiteColor))
-  xGridLine.localMatrix = m4.translation([0, offset, 0])
-  xGridLine.setParent(bookShelf)  
+  xGridLine.localMatrix = m4.translation([0, offset, offset])
+  xGridLine.setParent(bookShelf)
   objects.push(xGridLine)
 
   const yGridLine = new Node(lineOptions(yLinePrimitive, whiteColor))
