@@ -11,77 +11,64 @@ import {m4} from '../node_modules/twgl.js/dist/3.x/twgl-full'
 
 // Import local modules
 import Node from './node'
+import render from './_render'
+
+const degToRad = function (degree) {
+  return degree * Math.PI / 180;
+}
 
 const gl = twgl.getContext(document.getElementById('canvas'))
-const programInfo = twgl.createProgramInfo(gl, [shaderVertex, shaderFragment])
-const pixelRatio = window.devicePixelRatio
+
+const attributes = [
+  'a_position'
+]
+const programInfo = twgl.createProgramInfo(gl, [shaderVertex, shaderFragment], attributes)
+
+const trianglePrimitive = new Float32Array([
+  0, 0, 0,
+  1, 0, 0,
+  0, 1, 0,
+])
 
 const firstTriangle = new Node({
   programInfo,
   uniforms: { u_color: [254 / 255, 116 / 255, 40 / 255, 1] },
-  bufferInfo: twgl.createBufferInfoFromArrays(gl, {
-    a_position: [
-      0, 0, 0,    
-      1, 0, 0,
-      0, 1, 0,
-    ],
-  })
+  bufferInfo: twgl.createBufferInfoFromArrays(gl, { 'a_position': trianglePrimitive })
 })
 
 const secondTriangle = new Node({
   programInfo,
-  uniforms: { u_color: [255, 255, 255, 1] },
-  bufferInfo: twgl.createBufferInfoFromArrays(gl, {
-    a_position: [
-      1,  0, 0,          
-      0,  0, 0,
-      0, -1, 0,
-    ],
-  })
+  uniforms: { u_color: [255 / 255, 255 / 255, 255 / 255, 1] },
+  bufferInfo: twgl.createBufferInfoFromArrays(gl, { 'a_position': trianglePrimitive })
 })
+secondTriangle.localMatrix = m4.scaling([1, -1, 1])
 
 const thirdTriangle = new Node({
   programInfo,
-  uniforms: { u_color: [255, 0, 100, 1] },
-  bufferInfo: twgl.createBufferInfoFromArrays(gl, {
-    a_position: [
-      -1,  0, 0,          
-       0, -1, 0,
-       0,  0, 0,
-    ],
-  })
+  uniforms: { u_color: [255 / 255, 0 /255, 100 /255, 1] },
+  bufferInfo: twgl.createBufferInfoFromArrays(gl, { 'a_position': trianglePrimitive })
 })
+thirdTriangle.localMatrix = m4.scaling([-1, -1, 1])
+
+const fourthTriangle = new Node({
+  programInfo,
+  uniforms: { u_color: [100 / 255, 255 / 255, 150 / 255, 1] },
+  bufferInfo: twgl.createBufferInfoFromArrays(gl, { 'a_position': trianglePrimitive })
+})
+fourthTriangle.localMatrix = m4.scaling([-1, 1, 1])
 
 const objects = [
   firstTriangle,
   secondTriangle,
-  thirdTriangle
+  thirdTriangle,
+  fourthTriangle
 ]
 
-const objectsToDraw = [
-  firstTriangle.drawInfo,
-  secondTriangle.drawInfo,
-  thirdTriangle.drawInfo
-]
+const objectsToDraw = objects.map(object => {
+  console.log(object.localMatrix)
+  object.drawInfo.uniforms.u_matrix = object.localMatrix
+  return object.drawInfo
+})
+const enhancedRender = render.bind(null, gl, objectsToDraw)
 
-function render(time): void {
-  twgl.resizeCanvasToDisplaySize(gl.canvas, pixelRatio)
-  gl.viewport(0, 0, gl.canvas.width, gl.canvas.height)
-
-  gl.enable(gl.CULL_FACE)
-  gl.enable(gl.DEPTH_TEST)
-
-  gl.clearColor(0, 0, 0, 1)
-  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
-
-  objectsToDraw.forEach(drawInfo => {
-    gl.useProgram(drawInfo.programInfo.program)
-    twgl.setBuffersAndAttributes(gl, drawInfo.programInfo, drawInfo.bufferInfo)
-    twgl.setUniforms(drawInfo.programInfo, drawInfo.uniforms)
-    twgl.drawBufferInfo(gl, drawInfo.bufferInfo)
-  })
-
-  requestAnimationFrame(render)
-}
-
-requestAnimationFrame(render)
+window.requestAnimationFrame(enhancedRender)
