@@ -2,16 +2,16 @@
 
 // Import third-party modules
 import twgl from '../node_modules/twgl.js/dist/3.x/twgl'
+import {m4} from '../node_modules/twgl.js/dist/3.x/twgl-full'
 
 // Loacel constants
 const pixelRatio = window.devicePixelRatio
 
 export default function render (
   gl: WebGLRenderingContext,
-  objectsToDraw: Array<Object>,
+  objects: Array<Object>,
   currentTime: number
 ): void {
-
   twgl.resizeCanvasToDisplaySize(gl.canvas, pixelRatio)
   gl.viewport(0, 0, gl.canvas.width, gl.canvas.height)
 
@@ -21,7 +21,14 @@ export default function render (
   gl.clearColor(0, 0, 0, 1)
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
-  twgl.drawObjectList(gl, objectsToDraw)
+  const projectionMatrix = m4.perspective(45 * Math.PI / 180, gl.canvas.width / gl.canvas.height, 1, 2000)
 
-  window.requestAnimationFrame(render.bind(null, gl, objectsToDraw))
+  const objectsDrawInfo = objects.map(object => {
+    object.drawInfo.uniforms.u_matrix = m4.multiply(projectionMatrix, object.localMatrix)
+    return object.drawInfo
+  })
+
+  twgl.drawObjectList(gl, objectsDrawInfo)
+
+  window.requestAnimationFrame(render.bind(null, gl, objects))
 }

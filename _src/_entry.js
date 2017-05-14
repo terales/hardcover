@@ -23,13 +23,13 @@ const attributes = ['a_position']
 const programInfo = twgl.createProgramInfo(gl, [shaderVertex, shaderFragment], attributes)
 
 const xLinePrimitive = new Float32Array([
-  -1, 0, 0,
-   1, 0, 0,
+  -100, 0, -360,
+   100, 0, -360,
 ])
 
 const yLinePrimitive = new Float32Array([
-  0, -1, 0,
-  0,  1, 0,
+  0, -100, -360,
+  0,  100, -360,
 ])
 
 const lineOptions = (primitive, color) => ({
@@ -39,30 +39,31 @@ const lineOptions = (primitive, color) => ({
   bufferInfo: twgl.createBufferInfoFromArrays(gl, { 'a_position': primitive })
 })
 
+const bookShelf = new Node()
 const xAxis = new Node(lineOptions(xLinePrimitive, coverColor))
+xAxis.setParent(bookShelf)
 const yAxis = new Node(lineOptions(yLinePrimitive, coverColor))
+xAxis.setParent(bookShelf)
 
 const objects = [
   xAxis,
   yAxis
 ]
 
-for (let i = 0; i < 10; i++) {
-  const offset = -1 + i * 0.2
+for (let i = 0; i < 11; i++) {
+  const offset = -100 + i * 20
 
   const xGridLine = new Node(lineOptions(xLinePrimitive, whiteColor))
   xGridLine.localMatrix = m4.translation([0, offset, 0])
+  xGridLine.setParent(bookShelf)  
   objects.push(xGridLine)
 
   const yGridLine = new Node(lineOptions(yLinePrimitive, whiteColor))
   yGridLine.localMatrix = m4.translation([offset, 0, 0])
+  yGridLine.setParent(bookShelf)
   objects.push(yGridLine)
 }
 
-const objectsToDraw = objects.map(object => {
-  object.drawInfo.uniforms.u_matrix = object.localMatrix
-  return object.drawInfo
-})
-const enhancedRender = render.bind(null, gl, objectsToDraw)
+const enhancedRender = render.bind(null, gl, objects)
 
 window.requestAnimationFrame(enhancedRender)

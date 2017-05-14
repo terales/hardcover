@@ -8,7 +8,7 @@ export default class Node {
   worldMatrix: Float32Array
   drawInfo: Object
 
-  constructor (drawInfo: Object) {
+  constructor (drawInfo: ?Object) {
     this.drawInfo = drawInfo
     this.children = []
     this.localMatrix = m4.identity()
