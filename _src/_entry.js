@@ -13,59 +13,53 @@ import {m4} from '../node_modules/twgl.js/dist/3.x/twgl-full'
 import Node from './node'
 import render from './_render'
 
-const degToRad = function (degree) {
-  return degree * Math.PI / 180;
-}
+const coverColor = [254 / 255, 116 / 255, 40 / 255, 1]
+const whiteColor = [30 / 255, 30 / 255, 30 / 255, 1]
+const degToRad = (degree) => degree * Math.PI / 180
 
 const gl = twgl.getContext(document.getElementById('canvas'))
 
-const attributes = [
-  'a_position'
-]
+const attributes = ['a_position']
 const programInfo = twgl.createProgramInfo(gl, [shaderVertex, shaderFragment], attributes)
 
-const trianglePrimitive = new Float32Array([
-  0, 0, 0,
-  1, 0, 0,
-  0, 1, 0,
+const xLinePrimitive = new Float32Array([
+  -1, 0, 0,
+   1, 0, 0,
 ])
 
-const firstTriangle = new Node({
+const yLinePrimitive = new Float32Array([
+  0, -1, 0,
+  0,  1, 0,
+])
+
+const lineOptions = (primitive, color) => ({
   programInfo,
-  uniforms: { u_color: [254 / 255, 116 / 255, 40 / 255, 1] },
-  bufferInfo: twgl.createBufferInfoFromArrays(gl, { 'a_position': trianglePrimitive })
+  type: gl.LINES,
+  uniforms: { u_color: color },
+  bufferInfo: twgl.createBufferInfoFromArrays(gl, { 'a_position': primitive })
 })
 
-const secondTriangle = new Node({
-  programInfo,
-  uniforms: { u_color: [255 / 255, 255 / 255, 255 / 255, 1] },
-  bufferInfo: twgl.createBufferInfoFromArrays(gl, { 'a_position': trianglePrimitive })
-})
-secondTriangle.localMatrix = m4.scaling([1, -1, 1])
-
-const thirdTriangle = new Node({
-  programInfo,
-  uniforms: { u_color: [255 / 255, 0 /255, 100 /255, 1] },
-  bufferInfo: twgl.createBufferInfoFromArrays(gl, { 'a_position': trianglePrimitive })
-})
-thirdTriangle.localMatrix = m4.scaling([-1, -1, 1])
-
-const fourthTriangle = new Node({
-  programInfo,
-  uniforms: { u_color: [100 / 255, 255 / 255, 150 / 255, 1] },
-  bufferInfo: twgl.createBufferInfoFromArrays(gl, { 'a_position': trianglePrimitive })
-})
-fourthTriangle.localMatrix = m4.scaling([-1, 1, 1])
+const xAxis = new Node(lineOptions(xLinePrimitive, coverColor))
+const yAxis = new Node(lineOptions(yLinePrimitive, coverColor))
 
 const objects = [
-  firstTriangle,
-  secondTriangle,
-  thirdTriangle,
-  fourthTriangle
+  xAxis,
+  yAxis
 ]
 
+for (let i = 0; i < 10; i++) {
+  const offset = -1 + i * 0.2
+
+  const xGridLine = new Node(lineOptions(xLinePrimitive, whiteColor))
+  xGridLine.localMatrix = m4.translation([0, offset, 0])
+  objects.push(xGridLine)
+
+  const yGridLine = new Node(lineOptions(yLinePrimitive, whiteColor))
+  yGridLine.localMatrix = m4.translation([offset, 0, 0])
+  objects.push(yGridLine)
+}
+
 const objectsToDraw = objects.map(object => {
-  console.log(object.localMatrix)
   object.drawInfo.uniforms.u_matrix = object.localMatrix
   return object.drawInfo
 })
