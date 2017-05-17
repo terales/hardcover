@@ -24,14 +24,10 @@ const programInfo = twgl.createProgramInfo(gl, [shaderVertex, shaderFragment], a
 
 const grid = new CoordinatesGrid(gl, programInfo)
 
-const bookShelf = new Node()
-
-const gridLines = grid.prepareLines()
-gridLines.grid.setParent(bookShelf)
-
-const hardcover = hardcoverNode(gl, programInfo)
-
-const objects = [].concat(gridLines.lines, hardcover)
+const objects = [].concat(
+  grid.prepareLines(),
+  hardcoverNode(gl, programInfo)
+)
 
 const enhancedRender = render.bind(null, gl, objects)
 
