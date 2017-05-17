@@ -11,56 +11,24 @@ import {m4} from '../node_modules/twgl.js/dist/3.x/twgl-full'
 
 // Import local modules
 import Node from './node'
+import CoordinatesGrid from './coordinatesGrid'
 import render from './_render'
 
 const coverColor = [254 / 255, 116 / 255, 40 / 255, 1]
-const whiteColor = [30 / 255, 30 / 255, 30 / 255, 1]
-const degToRad = (degree) => degree * Math.PI / 180
 
 const gl: WebGLRenderingContext = twgl.getContext(document.getElementById('canvas'))
 
 const attributes = ['a_position']
 const programInfo = twgl.createProgramInfo(gl, [shaderVertex, shaderFragment], attributes)
 
-const xLinePrimitive = new Float32Array([
-  -100, 100, -500,
-   100, 100, -500,
-])
-
-const yLinePrimitive = new Float32Array([
-  -100, 100, -500,
-  -100, -100, -240, // 240 — is position 'at screen'
-])
-
-const lineOptions = (primitive, color) => ({
-  programInfo,
-  type: gl.LINES,
-  uniforms: { u_color: color },
-  bufferInfo: twgl.createBufferInfoFromArrays(gl, { 'a_position': primitive })
-})
+const grid = new CoordinatesGrid(gl, programInfo)
 
 const bookShelf = new Node()
-const xAxis = new Node(lineOptions(xLinePrimitive, coverColor))
-xAxis.setParent(bookShelf)
-const yAxis = new Node(lineOptions(yLinePrimitive, coverColor))
-xAxis.setParent(bookShelf)
 
-const objects = [
-  xAxis,
-  yAxis
-]
+const gridLines = grid.prepareLines()
+gridLines.grid.setParent(bookShelf)
 
-for (let i = 0; i < 11; i++) {
-  const xGridLine = new Node(lineOptions(xLinePrimitive, whiteColor))
-  xGridLine.localMatrix = m4.translation([0, -i * 20, i * 26])
-  xGridLine.setParent(bookShelf)
-  objects.push(xGridLine)
-
-  const yGridLine = new Node(lineOptions(yLinePrimitive, whiteColor))
-  yGridLine.localMatrix = m4.translation([i * 20, 0, 0])
-  yGridLine.setParent(bookShelf)
-  objects.push(yGridLine)
-}
+const objects = [].concat(gridLines.lines)
 
 const hardcoverHeight = 200
 const hardcoverWidth = hardcoverHeight * 0.71 // from http://artgorbunov.ru/books/ui/demo/
@@ -74,7 +42,7 @@ const fromCamera = -249
 const dummyCover = new Node({
   programInfo,
   type: gl.TRIANGLES,
-  uniforms: { u_color: [1, 1, 1, 1] },
+  uniforms: { u_color: coverColor },
   bufferInfo: twgl.createBufferInfoFromArrays(gl, {
     'a_position': [
       -hardcoverWidth / 2, fromTop - hardcoverHeight, fromCamera, // 240 — is position 'at screen'
