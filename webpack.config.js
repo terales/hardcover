@@ -12,7 +12,8 @@ module.exports = {
   },
   module: {
     rules: [
-      { test: /\.glsl/, loader: 'shader-loader' }
+      { test: /\.glsl/, loader: 'shader-loader' },
+      { test: /\.js/, loader: 'remove-flow-types-loader'}
     ]
   },
   devServer: {
