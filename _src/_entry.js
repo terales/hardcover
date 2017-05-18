@@ -22,13 +22,16 @@ const gl: WebGLRenderingContext = twgl.getContext(document.getElementById('canva
 const attributes = ['a_position']
 const programInfo = twgl.createProgramInfo(gl, [shaderVertex, shaderFragment], attributes)
 
+// BookShelf -- world object
+const bookShelf = new Node()
 const grid = new CoordinatesGrid(gl, programInfo)
 
 const objects = [].concat(
-  grid.prepareLines(),
-  hardcoverNode(gl, programInfo)
+  grid.prepareLines(bookShelf),
+  hardcoverNode(gl, programInfo, bookShelf)
 )
 
+bookShelf.updateWorldMatrix()
 const enhancedRender = render.bind(null, gl, objects)
 
 window.requestAnimationFrame(enhancedRender)

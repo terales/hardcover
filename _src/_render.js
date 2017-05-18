@@ -26,7 +26,7 @@ export default function render (
   const projectionMatrix = m4.perspective(45 * Math.PI / 180, gl.canvas.width / gl.canvas.height, 100, 501)
 
   const objectsDrawInfo = objects.map(object => {
-    object.drawInfo.uniforms.u_matrix = m4.multiply(projectionMatrix, object.localMatrix)
+    object.drawInfo.uniforms.u_matrix = m4.multiply(projectionMatrix, object.worldMatrix)
     return object.drawInfo
   })
 

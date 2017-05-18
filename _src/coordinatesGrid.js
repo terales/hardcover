@@ -30,23 +30,26 @@ export default class CoordinatesGrid {
     this.programInfo = programInfo
   }
 
-  prepareLines(): Array<Node> {
+  prepareLines(gridSceneParent: Node): Array<Node> {
+    const grid = new Node()
     const lines = []
 
-    this.addLine(xLinePrimitive, coverColor, lines, m4.identity())
-    this.addLine(yLinePrimitive, coverColor, lines, m4.identity())
+    this.addLine(xLinePrimitive, coverColor, lines, grid, m4.identity())
+    this.addLine(yLinePrimitive, coverColor, lines, grid, m4.identity())
 
     for (let i = 1; i < 11; i++) {
-      this.addLine(xLinePrimitive, grayColor, lines, m4.translation([0, -i * 20, i * 26])) // xGridLine
-      this.addLine(yLinePrimitive, grayColor, lines, m4.translation([i * 20, 0, 0])) // yGridLine
+      this.addLine(xLinePrimitive, grayColor, lines, grid, m4.translation([0, -i * 20, i * 26])) // xGridLine
+      this.addLine(yLinePrimitive, grayColor, lines, grid, m4.translation([i * 20, 0, 0])) // yGridLine
     }
 
+    grid.setParent(gridSceneParent)
     return lines
   }
 
-  addLine (primitive: Float32Array, color: Array<Number>, lines: Array<Node>, localMatrix: Float32Array) {
+  addLine (primitive: Float32Array, color: Array<Number>, lines: Array<Node>, grid: Node, localMatrix: Float32Array) {
     const line = new Node(this.prepareOptions(primitive, color))
     line.localMatrix = localMatrix
+    line.setParent(grid)
     lines.push(line)
   }
 

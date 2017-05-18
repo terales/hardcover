@@ -3,16 +3,19 @@ import { m4 } from '../node_modules/twgl.js/dist/3.x/twgl-full'
 
 export default class Node {
   children: Array<Node>
-  parent: Node
+  parent: ?Node
   localMatrix: Float32Array
   worldMatrix: Float32Array
-  drawInfo: Object
+  drawInfo: ?Object
 
-  constructor (drawInfo: ?Object) {
+  constructor (drawInfo: ?Object, parent: ?Node) {
     this.drawInfo = drawInfo
     this.children = []
     this.localMatrix = m4.identity()
-    this.worldMatrix = m4.identity()    
+    this.worldMatrix = m4.identity()
+    if (parent) {
+      this.setParent(parent)
+    }
   }
 
   setParent (parent: Node): void {
@@ -29,7 +32,7 @@ export default class Node {
     this.parent = parent
   }
 
-  updateWorldMatrix (parentWorldMatrix: Float32Array): void {
+  updateWorldMatrix (parentWorldMatrix: ?Float32Array): void {
     if (parentWorldMatrix) {
       // a matrix was passed in so do the math
       m4.multiply(parentWorldMatrix, this.localMatrix, this.worldMatrix)
