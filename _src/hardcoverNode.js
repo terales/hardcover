@@ -14,7 +14,7 @@ const hardcoverHeight = 200
 const hardcoverWidth = hardcoverHeight * 0.71 // from http://artgorbunov.ru/books/ui/demo/
 const fromTop = 100 - hardcoverHeight * 0.1
 
-const coverThickness = 50 // dummy number
+const coverThickness = 0.5 // dummy number
 
 //  240 — is position 'at screen',
 // -249 — size from _almost_ pixel perfect comparison with http://artgorbunov.ru/books/ui/demo/
@@ -40,7 +40,7 @@ const frontCoverFacePosition = [
 export default function hardcoverNode(gl: WebGLRenderingContext, programInfo: Object, hardcoverSceneParent: Node) {
   const hardcover = new Node({}, hardcoverSceneParent)
   const frontCover = new Node({}, hardcover)
-  frontCover.localMatrix = rotationAroundRightSide(-20)
+  frontCover.localMatrix = rotationAroundRightSide(-60)
   const enchancedGetPlaneNode = getPlaneNode.bind(null, gl, programInfo)
   return [
     frontCoverFace(enchancedGetPlaneNode, frontCover),
@@ -58,24 +58,31 @@ function frontCoverThicknessSide (getNode: Function, sceneParent: Node) {
   const color = [1, 1, 1, 1]
   const position = [
     halfWidth, bottomY, fromCamera,
-    halfWidth, fromTop, fromCamera,
     halfWidth, bottomY, frontCoverBackZ,
+    halfWidth, fromTop, fromCamera,
 
     halfWidth, fromTop, fromCamera,
-    halfWidth, fromTop, frontCoverBackZ,
     halfWidth, bottomY, frontCoverBackZ,
+    halfWidth, fromTop, frontCoverBackZ,
   ]
   return getNode(color, position, sceneParent)
 }
 
 function frontCoverInnerSide (getNode: Function, sceneParent: Node) {
-  // TODO For frontCoverInnerSide() we should copy frontCover() and translate it by Z by (-coverThickness) and rotate it by Y axis and change color
-  return getNode(flyleafColor, frontCoverFacePosition, sceneParent)
+  const node = getNode(flyleafColor, frontCoverFacePosition, sceneParent)
+  // After rotation by 180° it will be opened as frontCover, so we need to position it back inside initial hardcover position
+  // and push it back by coverThickness to form some new face of cube
+  // I have no clue why we should add coverThickness to translation X and set -0.03 to translation Y
+  // I see that 0.3 has connection to coverThickness
+  node.localMatrix = m4.translate(rotationAroundRightSide(180), [-hardcoverWidth + coverThickness, -0.3, coverThickness])
+  return node
 }
 
 function frontCoverFlyleaf (getNode: Function, sceneParent: Node) {
-  // TODO For frontCoverFlyleaf() we should copy frontCover() and translate it by Z by (-coverThickness - 1) and change color
-  return getNode(flyleafColor, frontCoverFacePosition, sceneParent)
+  const node = getNode(flyleafColor, frontCoverFacePosition, sceneParent)
+  // For frontCoverFlyleaf() we should copy frontCover() and translate it by Z by (-coverThickness) and change color
+  node.localMatrix = m4.translation([0, 0, -coverThickness])
+  return node
 }
 
 function getPlaneNode (gl: WebGLRenderingContext, programInfo: Object, color: Array<number>, position: Array<number>, parent: ?Node) {
