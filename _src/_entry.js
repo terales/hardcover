@@ -8,6 +8,7 @@ import shaderFragment from './shaderFragment.glsl'
 // Import third-party modules
 import twgl from '../node_modules/twgl.js/dist/3.x/twgl'
 import {m4} from '../node_modules/twgl.js/dist/3.x/twgl-full'
+import webglUI from '../node_modules/webgl-fundamentals/webgl/resources/webgl-lessons-ui'
 
 // Import local modules
 import Node from './node'
@@ -30,6 +31,16 @@ const objects = [].concat(
   grid.prepareLines(bookShelf),
   hardcoverNode(gl, programInfo, bookShelf)
 )
+
+webglUI.setupSlider('#FrontCoverOpenDegree', {
+  value: 60, // from hardcoverNode: frontCover.localMatrix = rotationAroundRightSide(-60)
+  max: 180,
+  slide: (event, {value}) => {
+    // TODO Refactor this dirty hack of integrating slider
+    bookShelf.children[1].children[0].setRotation(-value)
+    bookShelf.updateWorldMatrix()
+  }
+})
 
 bookShelf.updateWorldMatrix()
 const enhancedRender = render.bind(null, gl, objects)

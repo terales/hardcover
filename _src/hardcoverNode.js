@@ -41,6 +41,7 @@ export default function hardcoverNode(gl: WebGLRenderingContext, programInfo: Ob
   const hardcover = new Node({}, hardcoverSceneParent)
   const frontCover = new Node({}, hardcover)
   frontCover.localMatrix = rotationAroundRightSide(-60)
+  frontCover.setRotation = (degree) => { frontCover.localMatrix = rotationAroundRightSide(degree) }
   const enchancedGetPlaneNode = getPlaneNode.bind(null, gl, programInfo)
   return [
     frontCoverFace(enchancedGetPlaneNode, frontCover),
@@ -55,7 +56,7 @@ function frontCoverFace (getNode: Function, sceneParent: Node) {
 }
 
 function frontCoverThicknessSide (getNode: Function, sceneParent: Node) {
-  const color = [1, 1, 1, 1]
+  const color = [218 / 255, 102 / 255, 35 / 255, 1] // 85% of brightness in cover color
   const position = [
     halfWidth, bottomY, fromCamera,
     halfWidth, bottomY, frontCoverBackZ,
@@ -72,9 +73,7 @@ function frontCoverInnerSide (getNode: Function, sceneParent: Node) {
   const node = getNode(flyleafColor, frontCoverFacePosition, sceneParent)
   // After rotation by 180° it will be opened as frontCover, so we need to position it back inside initial hardcover position
   // and push it back by coverThickness to form some new face of cube
-  // I have no clue why we should add coverThickness to translation X and set -0.03 to translation Y
-  // I see that 0.3 has connection to coverThickness
-  node.localMatrix = m4.translate(rotationAroundRightSide(180), [-hardcoverWidth + coverThickness, -0.3, coverThickness])
+  node.localMatrix = m4.translate(rotationAroundRightSide(180), [-hardcoverWidth, 0, -coverThickness])
   return node
 }
 
@@ -101,8 +100,8 @@ function rotationAroundRightSide (angleInDegrees) {
   const rotatePointZ = fromCamera
 
   let matrix = m4.identity()
-  matrix = m4.translate(matrix, [-rotatePointX, rotatePointY, rotatePointZ])
+  matrix = m4.translate(matrix, [-rotatePointX, rotatePointY, rotatePointZ - coverThickness])
   matrix = m4.rotateY(matrix, angleInDegrees * Math.PI / 180)
-  matrix = m4.translate(matrix, [rotatePointX, -rotatePointY, -rotatePointZ])
+  matrix = m4.translate(matrix, [rotatePointX, -rotatePointY, -rotatePointZ + coverThickness])
   return matrix
 }
