@@ -16,10 +16,11 @@ const fromTop = 100 - hardcoverHeight * 0.1
 
 const coverThickness = 0.5 // dummy number
 
-//  240 — is position 'at screen',
+// -240 — is position 'at screen',
 // -249 — size from _almost_ pixel perfect comparison with http://artgorbunov.ru/books/ui/demo/
 // Maybe we need that 9 points shift away from camera to gain a space
 // for moving hardcover towards user
+const atScreen = -240
 const fromCamera = -249
 
 const halfWidth = hardcoverWidth / 2
@@ -36,9 +37,45 @@ const frontCoverFacePosition = [
  -halfWidth, fromTop, fromCamera,
 ]
 
+const hardcoverMinMoveDegree = 10
+const hardcoverMaxMoveDegree = 170
+const movingDegrees = hardcoverMaxMoveDegree - hardcoverMinMoveDegree - 2 // Because of unstrict comparison in hardcover.moveFromDegree()
+
+const hardcoverMoveXStep = halfWidth / movingDegrees
+const hardcoverMoveYStep = fromTop / 4 / movingDegrees // Why we should divide by 4?!
+const hardcoverMoveZStep = -(fromCamera - atScreen) / movingDegrees
+
 // Quick and dirty
 export default function hardcoverNode(gl: WebGLRenderingContext, programInfo: Object, hardcoverSceneParent: Node) {
   const hardcover = new Node({}, hardcoverSceneParent)
+  hardcover.moveFromDegree = (degree) => {
+    const heightToWidth = gl.canvas.height / gl.canvas.width
+
+    let moveX = 0
+    let moveY = 0
+    let moveZ = 0
+    let scale = 1
+
+    if (degree < hardcoverMinMoveDegree) {
+      moveX = 0
+      moveY = 0
+      moveZ = 0
+      scale = 1
+    } else if (degree > hardcoverMaxMoveDegree) {
+      moveX = halfWidth
+      moveY = fromTop / 4 // Why we should divide by 4?!
+      moveZ = (fromCamera - atScreen) * -1
+      scale = 1 + heightToWidth
+    } else {
+      moveX = degree * hardcoverMoveXStep
+      moveY = degree * hardcoverMoveYStep
+      moveZ = degree * hardcoverMoveZStep
+      scale = 1 + degree * heightToWidth / movingDegrees
+    }
+
+    console.log(degree, moveX, moveY, moveZ, scale)
+    hardcover.localMatrix = m4.translate(m4.scaling([scale, scale, 1]), [moveX, moveY, moveZ])
+  }
   const frontCover = new Node({}, hardcover)
   frontCover.localMatrix = rotationAroundRightSide(-60)
   frontCover.setRotation = (degree) => { frontCover.localMatrix = rotationAroundRightSide(degree) }

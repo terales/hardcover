@@ -37,7 +37,8 @@ webglUI.setupSlider('#FrontCoverOpenDegree', {
   max: 180,
   slide: (event, {value}) => {
     // TODO Refactor this dirty hack of integrating slider
-    bookShelf.children[1].children[0].setRotation(-value)
+    bookShelf.children[1].moveFromDegree(value) // hardcover
+    bookShelf.children[1].children[0].setRotation(-value) // frontcover
     bookShelf.updateWorldMatrix()
   }
 })
