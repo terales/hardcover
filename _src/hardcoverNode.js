@@ -56,21 +56,22 @@ export default function hardcoverNode(gl: WebGLRenderingContext, programInfo: Ob
     let moveZ = 0
     let scale = 1
 
-    if (degree < hardcoverMinMoveDegree) {
+    if (degree <= hardcoverMinMoveDegree) {
       moveX = 0
       moveY = 0
       moveZ = 0
       scale = 1
-    } else if (degree > hardcoverMaxMoveDegree) {
+    } else if (degree >= hardcoverMaxMoveDegree) {
       moveX = halfWidth
       moveY = fromTop / 4 // Why we should divide by 4?!
       moveZ = (fromCamera - atScreen) * -1
       scale = 1 + heightToWidth
     } else {
-      moveX = degree * hardcoverMoveXStep
-      moveY = degree * hardcoverMoveYStep
-      moveZ = degree * hardcoverMoveZStep
-      scale = 1 + degree * heightToWidth / movingDegrees
+      const degreeToStep = degree - 10
+      moveX = degreeToStep * hardcoverMoveXStep
+      moveY = degreeToStep * hardcoverMoveYStep
+      moveZ = degreeToStep * hardcoverMoveZStep
+      scale = 1 + degreeToStep * heightToWidth / movingDegrees
     }
 
     console.log(degree, moveX, moveY, moveZ, scale)
