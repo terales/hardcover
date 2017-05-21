@@ -57,8 +57,18 @@ export default class CoordinatesGrid {
     return {
       programInfo: this.programInfo,
       type: this.gl.LINES,
-      uniforms: { u_color: color },
-      bufferInfo: twgl.createBufferInfoFromArrays(this.gl, { 'a_position': primitive })
+      uniforms: { /* u_image: color */ },
+      bufferInfo: twgl.createBufferInfoFromArrays(this.gl, {
+        'a_position': primitive,
+        'a_texCoord': [
+          0.0, 0.0,
+          1.0, 0.0,
+          0.0, 1.0,
+          0.0, 1.0,
+          1.0, 0.0,
+          1.0, 1.0,
+        ]
+      })
     }
   }
 }

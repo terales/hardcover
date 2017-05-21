@@ -20,7 +20,7 @@ const coverColor = [254 / 255, 116 / 255, 40 / 255, 1]
 
 const gl: WebGLRenderingContext = twgl.getContext(document.getElementById('canvas'))
 
-const attributes = ['a_position']
+const attributes = ['a_position', 'a_texCoord']
 const programInfo = twgl.createProgramInfo(gl, [shaderVertex, shaderFragment], attributes)
 
 // BookShelf -- world object
@@ -45,5 +45,12 @@ webglUI.setupSlider('#FrontCoverOpenDegree', {
 
 bookShelf.updateWorldMatrix()
 const enhancedRender = render.bind(null, gl, objects)
+
+const texture = twgl.createTexture(gl, {
+  src: 'cover/endpaper.png',
+  min: gl.NEAREST,
+  mag: gl.NEAREST,
+  wrap: gl.CLAMP_TO_EDGE
+})
 
 window.requestAnimationFrame(enhancedRender)

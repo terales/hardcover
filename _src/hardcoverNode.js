@@ -126,8 +126,18 @@ function getPlaneNode (gl: WebGLRenderingContext, programInfo: Object, color: Ar
   return new Node({
     programInfo,
     type: gl.TRIANGLES,
-    uniforms: { u_color: color },
-    bufferInfo: twgl.createBufferInfoFromArrays(gl, { 'a_position': position })
+    uniforms: { /* u_color: color */ },
+    bufferInfo: twgl.createBufferInfoFromArrays(gl, {
+      'a_position': position,
+      'a_texCoord': [
+        0.0, 0.0,
+        1.0, 0.0,
+        0.0, 1.0,
+        0.0, 1.0,
+        1.0, 0.0,
+        1.0, 1.0,
+      ]
+    })
   }, parent)
 }
 
