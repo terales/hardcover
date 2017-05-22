@@ -1,5 +1,10 @@
 // @flow
 
+// Create different shaders?
+// One for static and single color textures, second for dynamic texture generated with 2D canvas
+
+// TODO MVP: -- apply front face cover
+
 // $FlowFixMe
 import shaderVertex from './shaderVertex.glsl'
 // $FlowFixMe
@@ -47,7 +52,7 @@ bookShelf.updateWorldMatrix()
 const enhancedRender = render.bind(null, gl, objects)
 
 const texture = twgl.createTexture(gl, {
-  src: 'cover/endpaper.png',
+  src: 'cover/texture.png',
   min: gl.NEAREST,
   mag: gl.NEAREST,
   wrap: gl.CLAMP_TO_EDGE

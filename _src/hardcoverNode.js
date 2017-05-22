@@ -45,6 +45,28 @@ const hardcoverMoveXStep = halfWidth / movingDegrees
 const hardcoverMoveYStep = fromTop / 4 / movingDegrees // Why we should divide by 4?!
 const hardcoverMoveZStep = -(fromCamera - atScreen) / movingDegrees
 
+// Texture
+const flyleafInTextureMap = 2000 / 4096
+const flyleafTexCoord = [
+  0.0,                 0.0,
+  flyleafInTextureMap, 0.0,
+  0.0,                 flyleafInTextureMap,
+  0.0,                 flyleafInTextureMap,
+  flyleafInTextureMap, 0.0,
+  flyleafInTextureMap, flyleafInTextureMap,
+]
+
+const frontFaceWidthInTextureMap = 4096 - 1000
+const frontFaceHeightInTextureMap = 4096 - 1414
+const frontFaceTexCoord = [
+  0.0,                 0.0,
+  1.0, 0.0,
+  0.0,                 1.0,
+  0.0,                 1.0,
+  1.0, 0.0,
+  1.0, 1.0,
+]
+
 // Quick and dirty
 export default function hardcoverNode(gl: WebGLRenderingContext, programInfo: Object, hardcoverSceneParent: Node) {
   const hardcover = new Node({}, hardcoverSceneParent)
@@ -74,7 +96,6 @@ export default function hardcoverNode(gl: WebGLRenderingContext, programInfo: Ob
       scale = 1 + degreeToStep * heightToWidth / movingDegrees
     }
 
-    console.log(degree, moveX, moveY, moveZ, scale)
     hardcover.localMatrix = m4.translate(m4.scaling([scale, scale, 1]), [moveX, moveY, moveZ])
   }
   const frontCover = new Node({}, hardcover)
@@ -90,7 +111,7 @@ export default function hardcoverNode(gl: WebGLRenderingContext, programInfo: Ob
 }
 
 function frontCoverFace (getNode: Function, sceneParent: Node) {
-  return getNode(coverColor, frontCoverFacePosition, sceneParent)
+  return getNode(coverColor, frontCoverFacePosition, sceneParent, frontFaceTexCoord)
 }
 
 function frontCoverThicknessSide (getNode: Function, sceneParent: Node) {
@@ -104,11 +125,11 @@ function frontCoverThicknessSide (getNode: Function, sceneParent: Node) {
     halfWidth, bottomY, frontCoverBackZ,
     halfWidth, fromTop, frontCoverBackZ,
   ]
-  return getNode(color, position, sceneParent)
+  return getNode(color, position, sceneParent, flyleafTexCoord)
 }
 
 function frontCoverInnerSide (getNode: Function, sceneParent: Node) {
-  const node = getNode(flyleafColor, frontCoverFacePosition, sceneParent)
+  const node = getNode(flyleafColor, frontCoverFacePosition, sceneParent, flyleafTexCoord)
   // After rotation by 180° it will be opened as frontCover, so we need to position it back inside initial hardcover position
   // and push it back by coverThickness to form some new face of cube
   node.localMatrix = m4.translate(rotationAroundRightSide(180), [-hardcoverWidth, 0, -coverThickness])
@@ -116,27 +137,20 @@ function frontCoverInnerSide (getNode: Function, sceneParent: Node) {
 }
 
 function frontCoverFlyleaf (getNode: Function, sceneParent: Node) {
-  const node = getNode(flyleafColor, frontCoverFacePosition, sceneParent)
+  const node = getNode(flyleafColor, frontCoverFacePosition, sceneParent, flyleafTexCoord)
   // For frontCoverFlyleaf() we should copy frontCover() and translate it by Z by (-coverThickness) and change color
   node.localMatrix = m4.translation([0, 0, -coverThickness])
   return node
 }
 
-function getPlaneNode (gl: WebGLRenderingContext, programInfo: Object, color: Array<number>, position: Array<number>, parent: ?Node) {
+function getPlaneNode (gl: WebGLRenderingContext, programInfo: Object, color: Array<number>, position: Array<number>, parent: ?Node, texCoord: Array<number>) {
   return new Node({
     programInfo,
     type: gl.TRIANGLES,
     uniforms: { /* u_color: color */ },
     bufferInfo: twgl.createBufferInfoFromArrays(gl, {
       'a_position': position,
-      'a_texCoord': [
-        0.0, 0.0,
-        1.0, 0.0,
-        0.0, 1.0,
-        0.0, 1.0,
-        1.0, 0.0,
-        1.0, 1.0,
-      ]
+      'a_texCoord': texCoord
     })
   }, parent)
 }
