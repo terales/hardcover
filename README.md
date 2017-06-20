@@ -1,4 +1,7 @@
 # Hardcover
+
+## This is a [research code](https://meiert.com/en/blog/20140716/research-and-production/).
+
 Неофициальный трехмерный анимированный переплёт для книг Издательства дизайн-бюро Артёма Горбунова.
 
 Пример анимации из [электронного учебника «Пользовательский интерфейс»:](http://artgorbunov.ru/books/ui/demo/)
